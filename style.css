@@ -5,6 +5,17 @@ body {
   min-height: 100vh;
   font-family: "Montserrat", Arial, sans-serif;
 }
+
+
+/* =========================
+   Mobile + Desktop Consistency Fixes
+   (No UI redesign — only responsive safety)
+========================= */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { box-sizing: border-box; }
+body { overflow-x: hidden; }
+img, svg, video { max-width: 100%; height: auto; }
+
 .bg {
   position: fixed;
   inset: 0;
@@ -350,15 +361,16 @@ section {
   transform: translateY(0) scale(0.99);
 }
 .event-card {
-  max-width: 660px;
+max-width: 660px;
   width: 97vw;
-  padding: 180px 28px 39px;
+  padding: clamp(56px, 10vh, 180px) 28px 39px;
   background: linear-gradient(170deg, #ebb7de 60%, #fba2c8 120%);
   border-radius: 30px;
   box-shadow:
     0 5px 28px #f502d5,
     0 1.9px 8px #e9a2d73c;
   margin: 1.9em auto 1.8em;
+
 }
 .event-badge {
   text-align: center;
@@ -465,8 +477,8 @@ section {
 }
 .music-control {
   position: fixed;
-  bottom: 17px;
-  right: 18px;
+  bottom: calc(17px + env(safe-area-inset-bottom));
+  right: calc(18px + env(safe-area-inset-right));
   z-index: 3000;
   width: 39px;
   height: 39px;
@@ -617,7 +629,18 @@ section {
   .rsvp-table-glass {
     padding: 2vw 1vw;
   }
+
+/* iOS: stop zoom-on-focus for inputs */
+#rsvpForm input,
+#rsvpForm select,
+#rsvpForm textarea,
+.admin-login-panel input[type="email"],
+.admin-login-panel input[type="password"] {
+  font-size: 16px;
 }
+
+}
+
 /* Petals BG */
 .petals-layer {
   position: fixed;
@@ -1280,258 +1303,7 @@ section {
   }
 }
 
-/* ==================================================
-   MOBILE FRIENDLY PATCH (keeps same UI/behavior)
-   - Prevent horizontal overflow
-   - Improve tap targets + iOS input zoom
-   - Fix event-card huge top padding on phones
-   - Safer music button position on notched phones
-================================================== */
-
-html { box-sizing: border-box; }
-*, *::before, *::after { box-sizing: inherit; }
-
-html, body { width: 100%; overflow-x: hidden; }
-img, svg, video, canvas { max-width: 100%; height: auto; }
-
-@media (max-width: 700px) {
-  .event-card { padding: 120px 7vw 28px; }
-  .carousel { margin-top: -48px; }
-  .carousel-arrow { width: 46px; height: 46px; font-size: 2rem; }
-}
-
-@media (max-width: 600px) {
-  /* Prevent iOS Safari from zooming inputs on focus */
-  #rsvpForm input,
-  #rsvpForm textarea,
-  #rsvpForm select,
-  .admin-login-panel input[type="email"],
-  .admin-login-panel input[type="password"] {
-    font-size: 16px;
-  }
-
-  /* Better action buttons wrapping in admin header */
-  .admin-header-actions {
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-  }
-
-  /* Safer floating music button on phones with bottom/side safe areas */
-  .music-control {
-    bottom: calc(14px + env(safe-area-inset-bottom));
-    right: calc(14px + env(safe-area-inset-right));
-  }
-
-  /* Countdown blocks a bit tighter */
-  .countdown { gap: 14px; }
-  .countdown div { min-width: 98px; font-size: 1.65rem; }
-}
-
-@media (max-width: 500px) {
-  .event-card { padding: 110px 6vw 26px; }
-  .detail { min-width: 140px; }
-  .event-map { height: 170px; }
-
-  .carousel-track { width: min(520px, 78vw); }
-  .carousel-img { height: 140px; }
-}
-
-@media (max-width: 360px) {
-  .countdown div { min-width: 86px; font-size: 1.45rem; }
-  .carousel-arrow { width: 42px; height: 42px; font-size: 1.8rem; }
-}
-
-
-
-
-
-/* =========================
-   PAGE 1 (WELCOME / COVER)
-========================= */
-
-.cover {
-  min-height: 100svh;
-  display: grid;
-  place-items: center;
-  padding: 22px 16px;
-  background: radial-gradient(1200px 700px at 50% 0%,
-      rgba(255, 255, 255, 0.55),
-      rgba(255, 255, 255, 0) 60%),
-    linear-gradient(180deg, #ffd6e7 0%, #ffc1db 45%, #ffb6d6 100%);
-}
-
-.cover-card {
-  width: min(520px, 94vw);
-  border-radius: 34px;
-  position: relative;
-  overflow: hidden;
-  padding: 26px 18px 30px;
-  box-shadow: 0 18px 60px rgba(74, 14, 54, 0.18);
-  background: linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.18));
-  backdrop-filter: blur(10px);
-}
-
-/* subtle texture */
-.cover-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(900px 500px at 10% 10%, rgba(255,255,255,0.35), transparent 60%),
-    radial-gradient(900px 500px at 90% 30%, rgba(255,255,255,0.22), transparent 60%),
-    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.20), transparent 2px),
-    radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.18), transparent 2px);
-  opacity: 0.8;
-  pointer-events: none;
-}
-
-/* the big rounded arch outline */
-.cover-arch {
-  position: absolute;
-  left: 50%;
-  top: 10px;
-  transform: translateX(-50%);
-  width: 92%;
-  height: 92%;
-  border-radius: 40px;
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  pointer-events: none;
-}
-
-/* inner arch line */
-.cover-arch::after {
-  content: "";
-  position: absolute;
-  inset: 14px;
-  border-radius: 34px;
-  border: 2px solid rgba(255, 255, 255, 0.22);
-  pointer-events: none;
-}
-
-.cover-inner {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  padding: 14px 10px 10px;
-}
-
-.cover-top {
-  margin: 10px 0 8px;
-  font-size: 34px;
-  letter-spacing: 0.2px;
-  color: #2d4bff;
-  font-family: "Montserrat", system-ui, -apple-system, Segoe UI, sans-serif;
-}
-
-.cover-name {
-  margin: 0 0 18px;
-  font-size: clamp(44px, 7vw, 62px);
-  line-height: 1.05;
-  color: #2d4bff;
-  font-weight: 400;
-  font-family: "Great Vibes", cursive; /* matches screenshot style */
-}
-
-/* photo circle with red ring */
-.cover-photo {
-  width: 180px;
-  height: 180px;
-  margin: 0 auto 18px;
-  border-radius: 999px;
-  padding: 6px;
-  background: #e21818;
-  box-shadow: 0 14px 26px rgba(0,0,0,0.12);
-}
-
-.cover-photo img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  border-radius: 999px;
-  background: #fff;
-}
-
-.cover-title {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 16px;
-  margin: 6px 0 8px;
-}
-
-.cover-age {
-  font-family: "Montserrat", system-ui, -apple-system, Segoe UI, sans-serif;
-  color: #2c2b5a;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-}
-
-.cover-age .num {
-  font-size: 56px;
-}
-
-.cover-age .sup {
-  font-size: 18px;
-  vertical-align: super;
-  margin-left: 2px;
-}
-
-.cover-bday {
-  font-family: "Great Vibes", cursive;
-  font-size: 48px;
-  color: #2c2b5a;
-  opacity: 0.95;
-}
-
-.cover-line {
-  width: 74%;
-  height: 3px;
-  margin: 18px auto 24px;
-  border-radius: 99px;
-  background: rgba(255,255,255,0.55);
-}
-
-/* button like screenshot */
-.cover-btn {
-  width: min(460px, 92%);
-  border: 0;
-  border-radius: 28px;
-  padding: 18px 22px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-
-  background: #2b2558;
-  color: #ffffff;
-  font-family: "Montserrat", system-ui, -apple-system, Segoe UI, sans-serif;
-  font-size: 26px;
-  font-weight: 800;
-  box-shadow: 0 18px 40px rgba(20, 10, 35, 0.28);
-  transition: transform 0.12s ease, filter 0.12s ease;
-}
-
-.cover-btn:active {
-  transform: translateY(1px) scale(0.99);
-}
-
-.cover-btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.10);
-}
-
-/* Mobile fit tweaks (same look, better spacing) */
 @media (max-width: 420px) {
-  .cover-top { font-size: 28px; }
-  .cover-photo { width: 160px; height: 160px; }
-  .cover-age .num { font-size: 50px; }
-  .cover-bday { font-size: 44px; }
-  .cover-btn { font-size: 22px; padding: 16px 18px; }
+  .carousel { gap: 6px; }
+  .carousel-arrow { width: 46px; height: 46px; font-size: 2rem; }
 }
